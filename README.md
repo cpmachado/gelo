@@ -1,5 +1,7 @@
 # gelo
 
+[![build](https://github.com/cpmachado/gelo/actions/workflows/go.yml/badge.svg)](https://github.com/cpmachado/gelo/actions/workflows/go.yml)
+
 Go ELO, is a simple program I started writting on the first day of WCC
 2024(2024/11/25). After I got inspired by the brilliant performance of Ding
 Liren.

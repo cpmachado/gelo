@@ -4,7 +4,6 @@ package cmd
 import (
 	"os"
 
-	gelo "github.com/cpmachado/gelo/lib"
 	"github.com/spf13/cobra"
 )
 
@@ -14,9 +13,6 @@ var rootCmd = &cobra.Command{
 	Long: `gelo simply retrieves the last xml list from FIDE and outputs a csv
 version of it, which greatly reduces the size of the file and makes
 parsing easier.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		gelo.ExtractAndGenerateCsv()
-	},
 }
 
 func Execute() {

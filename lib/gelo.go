@@ -11,18 +11,18 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cpmachado/gelo/player"
+	"github.com/cpmachado/gelo/fide"
 )
 
-type Player = player.Player
-type Players = player.Players
+type Player = fide.FidePlayer
+type Players = fide.FidePlayers
 
 const (
 	dst        = "output"
 	xmlPlayers = "output/players_list_xml_foa.xml"
 	csvPlayers = "output/players.csv"
 	zipFile    = "output/players_list_xml.zip"
-	fideUrl    = "https://ratings.fide.com/download/players_list_xml.zip"
+	fideUrl    = fide.XmlURL
 )
 
 func writeCsv(players Players) {
@@ -78,7 +78,7 @@ func retrieveListZip() {
 		return
 	}
 
-	err = ioutil.WriteFile(zipFile, body, 0777)
+	err = ioutil.WriteFile(zipFile, body, 0644)
 
 	if err != nil {
 		fmt.Printf("Error %s", err)
@@ -125,7 +125,7 @@ func ExtractAndGenerateCsv() {
 	}
 	fmt.Printf("Retriving list from %s\n", fideUrl)
 	retrieveListZip()
-	fmt.Printf("Unzipping list to %s\n", xmlPlayers)
+	fmt.Printf("Unzipping list\n")
 	unzipList()
 	fmt.Printf("Parsing Players\n")
 	players := readXml()

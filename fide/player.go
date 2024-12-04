@@ -1,5 +1,5 @@
 /* Copyright © 2024 Carlos Pinto Machado<cpmachado@protonmail.com> */
-package player
+package fide
 
 import (
 	"encoding/xml"
@@ -7,12 +7,12 @@ import (
 	"strings"
 )
 
-type Players struct {
-	XMLName xml.Name `xml:"playerslist"`
-	Players []Player `xml:"player"`
+type FidePlayers struct {
+	XMLName xml.Name     `xml:"playerslist"`
+	Players []FidePlayer `xml:"player"`
 }
 
-type Player struct {
+type FidePlayer struct {
 	XMLName      xml.Name `xml:"player"`
 	Id           int      `xml:"fideid"`
 	Name         string   `xml:"name"`
@@ -35,7 +35,7 @@ type Player struct {
 	Flag         string   `xml:"flag"`
 }
 
-func (p Player) StringifiedRecords() []string {
+func (p FidePlayer) StringifiedRecords() []string {
 	return []string{
 		strconv.Itoa(p.Id),
 		p.Name,
@@ -59,6 +59,6 @@ func (p Player) StringifiedRecords() []string {
 	}
 }
 
-func (p Player) String() string {
+func (p FidePlayer) String() string {
 	return strings.Join(p.StringifiedRecords(), ";")
 }

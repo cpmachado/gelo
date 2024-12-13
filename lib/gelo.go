@@ -1,4 +1,3 @@
-/* Copyright © 2024 Carlos Pinto Machado<cpmachado@protonmail.com> */
 package lib
 
 import (

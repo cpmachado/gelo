@@ -6,7 +6,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -14,8 +14,10 @@ import (
 	"github.com/cpmachado/gelo/fide"
 )
 
-type Player = fide.FidePlayer
-type Players = fide.FidePlayers
+type (
+	Player  = fide.FidePlayer
+	Players = fide.FidePlayers
+)
 
 const (
 	dst        = "output"
@@ -27,20 +29,27 @@ const (
 
 func writeCsv(players Players) {
 	n := len(players.Players)
-	header :=
-		"id,name,country,sex,title,w_title,o_title,foa_title,rating,games,k,rapid_rating,rapid_games,rapid_k,blitz_rating,blitz_games,blitz_k,birthday,flag"
+	header := "id,name,country,sex,title,w_title,o_title,foa_title,rating,games,k,rapid_rating,rapid_games,rapid_k,blitz_rating,blitz_games,blitz_k,birthday,flag"
 
-	w, _ := os.OpenFile(csvPlayers, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	w, _ := os.OpenFile(csvPlayers, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o644)
 
-	w.WriteString(header)
+	if _, err := w.WriteString(header); err != nil {
+		log.Fatal(err)
+	}
 	for i, p := range players.Players {
 		if i > 0 && i%1000 == 0 {
 			fmt.Printf("\r                              \rWritten %d/%d", i, n)
 		}
-		w.WriteString("\n")
-		w.WriteString(p.String())
+		if _, err := w.WriteString("\n"); err != nil {
+			log.Fatal(err)
+		}
+		if _, err := w.WriteString(p.String()); err != nil {
+			log.Fatal(err)
+		}
 	}
-	w.WriteString("\n")
+	if _, err := w.WriteString("\n"); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("\r                              \rWritten %d/%d\n", n, n)
 
 	w.Close()
@@ -48,38 +57,37 @@ func writeCsv(players Players) {
 
 func readXml() Players {
 	xmlFile, err := os.Open(xmlPlayers)
-
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	defer xmlFile.Close()
-	byteValue, _ := ioutil.ReadAll(xmlFile)
+	byteValue, _ := io.ReadAll(xmlFile)
 	var players Players
 
-	xml.Unmarshal(byteValue, &players)
+	err = xml.Unmarshal(byteValue, &players)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return players
 }
 
 func retrieveListZip() {
 	c := http.Client{}
 	resp, err := c.Get(fideUrl)
-
 	if err != nil {
 		fmt.Printf("Error %s", err)
 		return
 	}
 
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Printf("Error %s", err)
 		return
 	}
 
-	err = ioutil.WriteFile(zipFile, body, 0644)
-
+	err = os.WriteFile(zipFile, body, 0o644)
 	if err != nil {
 		fmt.Printf("Error %s", err)
 		return

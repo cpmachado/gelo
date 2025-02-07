@@ -1,4 +1,4 @@
-package lib
+package gelo
 
 import (
 	"archive/zip"

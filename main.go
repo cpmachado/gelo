@@ -1,7 +1,9 @@
 package main
 
-import "github.com/cpmachado/gelo/cmd"
+import (
+	gelo "github.com/cpmachado/gelo/lib"
+)
 
 func main() {
-	cmd.Execute()
+	gelo.ExtractAndGenerateCsv()
 }

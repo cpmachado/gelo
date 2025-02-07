@@ -1,7 +1,7 @@
 package main
 
 import (
-	gelo "github.com/cpmachado/gelo/lib"
+	gelo "go.cpmachado.pt/gelo/lib"
 )
 
 func main() {

@@ -10,7 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cpmachado/gelo/fide"
+	"go.cpmachado.pt/gelo/fide"
 )
 
 type (

@@ -17,7 +17,7 @@ import (
 	"go.cpmachado.pt/gelo/internal/config"
 )
 
-var Version string = "0.1.3"
+var Version string = "0.2.0"
 
 const (
 	PlayersNumberCap = 100000000

@@ -12,9 +12,8 @@ Unfortunely, he lost, but did so as a champion.
 gelo simply retrieves the last xml list from FIDE and outputs a csv version of
 it, which greatly reduces the size of the file and makes parsing easier.
 
-## Of note
-Given that the name field contains commas, the csv uses semi-colon(";") as a
-separator.
+Also it makes some name manipulation, due to tabs, double spacing and others to
+be found in names.
 
 ## Install
 

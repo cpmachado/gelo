@@ -34,6 +34,7 @@ func init() {
 func main() {
 	cfg := config.GetConfig()
 
+	slog.Info("MAIN", slog.String("message", "Creating directory"), slog.String("destination", cfg.Destination))
 	if err := os.MkdirAll(cfg.Destination, os.ModePerm); err != nil {
 		slog.Error("MAIN", slog.Any("error", err))
 		os.Exit(1)
@@ -50,6 +51,11 @@ func main() {
 		slog.Error("MAIN", slog.Any("error", err))
 		os.Exit(1)
 	}
+	slog.Info("MAIN",
+		slog.String("message", "Retrieving records"),
+		slog.String("origin", fide.XmlURL),
+		slog.String("filename", filename),
+	)
 	resp, err := http.Get(fide.XmlURL)
 	if err != nil {
 		slog.Error("MAIN", slog.Any("error", err))
@@ -72,23 +78,21 @@ func main() {
 		os.Exit(1)
 	}
 
-	slog.Info("MAIN", slog.String("message", "Opening Zip"))
+	slog.Info("MAIN", slog.String("message", "Open zip"))
 	archive, err := zip.OpenReader(path.Join(cfg.Destination, filename))
 	if err != nil {
 		slog.Error("MAIN", slog.Any("error", err))
 		os.Exit(1)
 	}
 
-	slog.Info("MAIN", slog.String("message", "Opening XML"))
+	slog.Info("MAIN", slog.String("message", "Opening records"), slog.String("file", archive.File[0].Name))
 	xmlFile, err := archive.File[0].Open()
 	if err != nil {
 		slog.Error("MAIN", slog.Any("error", err))
 		os.Exit(1)
 	}
 
-	slog.Info("MAIN", slog.String("message", "Decoding XML"))
 	decoder := xml.NewDecoder(xmlFile)
-	slog.Info("MAIN", slog.String("message", "Encoding csv"))
 
 	file, err = os.OpenFile(path.Join(cfg.Destination, "players.csv"), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o644)
 	if err != nil {
@@ -97,6 +101,8 @@ func main() {
 	}
 
 	w := csv.NewWriter(file)
+
+	slog.Info("MAIN", slog.String("message", "Decoding XML, and encoding csv"))
 
 	if err = w.Write(fide.PlayerCsvHeader); err != nil {
 		slog.Error("MAIN", slog.Any("error", err))
@@ -109,6 +115,9 @@ func main() {
 		tok, err := decoder.Token()
 		if err != nil {
 			if err == io.EOF {
+				slog.Info("MAIN",
+					slog.String("message", "Number of parsed players"),
+					slog.Int("parsed", i))
 				break
 			}
 			slog.Error("MAIN", slog.Any("error", err))
@@ -130,7 +139,9 @@ func main() {
 				}
 				// log each 100k
 				if i%PlayersNumberLog == 0 {
-					slog.Info("MAIN", slog.Int("parsed_players", i))
+					slog.Info("MAIN",
+						slog.String("message", "Number of parsed players"),
+						slog.Int("parsed", i))
 				}
 			}
 		}

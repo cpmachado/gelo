@@ -17,7 +17,7 @@ import (
 	"go.cpmachado.pt/gelo/internal/config"
 )
 
-var Version string = "0.1.0"
+var Version string = "0.1.1"
 
 func init() {
 	cfg := config.GetConfig()

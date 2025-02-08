@@ -122,6 +122,12 @@ func main() {
 		}
 	}
 
+	w.Flush()
+	if err = w.Error(); err != nil {
+		slog.Error("MAIN", slog.Any("error", err))
+		os.Exit(1)
+	}
+
 	if err = file.Close(); err != nil {
 		slog.Error("MAIN", slog.Any("error", err))
 		os.Exit(1)

@@ -34,7 +34,7 @@ func init() {
 func main() {
 	cfg := config.GetConfig()
 
-	if err := os.MkdirAll(cfg.Destination, os.ModeDir); err != nil {
+	if err := os.MkdirAll(cfg.Destination, os.ModePerm); err != nil {
 		slog.Error("MAIN", slog.Any("error", err))
 		os.Exit(1)
 	}

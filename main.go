@@ -19,6 +19,11 @@ import (
 
 var Version string = "0.1.1"
 
+const (
+	PlayersNumberCap = 100000000
+	PlayersNumberLog = 500000
+)
+
 func init() {
 	cfg := config.GetConfig()
 	parseFlags(cfg)
@@ -83,23 +88,6 @@ func main() {
 
 	slog.Info("MAIN", slog.String("message", "Decoding XML"))
 	decoder := xml.NewDecoder(xmlFile)
-
-	var players fide.Players
-	if err = decoder.Decode(&players); err != nil {
-		slog.Error("MAIN", slog.Any("error", err))
-		os.Exit(1)
-	}
-
-	if err = xmlFile.Close(); err != nil {
-		slog.Error("MAIN", slog.Any("error", err))
-		os.Exit(1)
-	}
-
-	if err = archive.Close(); err != nil {
-		slog.Error("MAIN", slog.Any("error", err))
-		os.Exit(1)
-	}
-
 	slog.Info("MAIN", slog.String("message", "Encoding csv"))
 
 	file, err = os.OpenFile(path.Join(cfg.Destination, "players.csv"), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o644)
@@ -115,11 +103,47 @@ func main() {
 		os.Exit(1)
 	}
 
-	for _, player := range players.Players {
-		if err = w.Write(player.ToCsvRecord()); err != nil {
+	var player fide.Player
+
+	for i := 0; i < PlayersNumberCap; {
+		tok, err := decoder.Token()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
 			slog.Error("MAIN", slog.Any("error", err))
 			os.Exit(1)
 		}
+
+		switch v := tok.(type) {
+		case xml.StartElement:
+			if v.Name.Local == "player" {
+				i++
+				if err := decoder.DecodeElement(&player, &v); err != nil {
+					fmt.Println("Error decoding player element:", err)
+					return
+				}
+				player.CorrectRecord()
+				if err = w.Write(player.ToCsvRecord()); err != nil {
+					slog.Error("MAIN", slog.Any("error", err))
+					os.Exit(1)
+				}
+				// log each 100k
+				if i%PlayersNumberLog == 0 {
+					slog.Info("MAIN", slog.Int("parsed_players", i))
+				}
+			}
+		}
+	}
+
+	if err = xmlFile.Close(); err != nil {
+		slog.Error("MAIN", slog.Any("error", err))
+		os.Exit(1)
+	}
+
+	if err = archive.Close(); err != nil {
+		slog.Error("MAIN", slog.Any("error", err))
+		os.Exit(1)
 	}
 
 	w.Flush()
@@ -132,7 +156,7 @@ func main() {
 		slog.Error("MAIN", slog.Any("error", err))
 		os.Exit(1)
 	}
-	slog.Info("MAIN", slog.String("message", "Finish encoding csv"))
+	slog.Info("MAIN", slog.String("message", "Operation Complete"))
 }
 
 func parseFlags(cfg *config.Config) {

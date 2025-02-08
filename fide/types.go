@@ -3,6 +3,7 @@ package fide
 import (
 	_ "encoding/csv"
 	"encoding/xml"
+	"regexp"
 	"strconv"
 )
 
@@ -32,6 +33,18 @@ type Player struct {
 	Blitz_k      int      `xml:"blitz_k" csv:"blitz_k"`
 	Birthday     string   `xml:"birthday" csv:"birthday"`
 	Flag         string   `xml:"flag" csv:"flag"`
+}
+
+var (
+	spaceBeforeComma        = regexp.MustCompile(`\s+,`)
+	multipleSpacesForSingle = regexp.MustCompile(`\s\s+`)
+	duplicatedCommas        = regexp.MustCompile(`,,`)
+)
+
+func (p *Player) CorrectRecord() {
+	p.Name = multipleSpacesForSingle.ReplaceAllString(p.Name, " ")
+	p.Name = spaceBeforeComma.ReplaceAllString(p.Name, ",")
+	p.Name = duplicatedCommas.ReplaceAllString(p.Name, ",")
 }
 
 var PlayerCsvHeader = []string{

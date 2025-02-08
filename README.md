@@ -16,6 +16,14 @@ it, which greatly reduces the size of the file and makes parsing easier.
 Given that the name field contains commas, the csv uses semi-colon(";") as a
 separator.
 
+## Install
+
+Currently there isn't a pipeline to generate binaries, so install go and:
+
+```sh
+go install go.cpmachado.pt/gelo@latest
+```
+
 ## Usage
 ```sh
 Usage of gelo:

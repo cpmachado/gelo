@@ -6,4 +6,7 @@ import (
 	"github.com/adrg/xdg"
 )
 
-var DefaultConfigFile string = path.Join(xdg.ConfigHome, "gelo", "config.json")
+var (
+	DefaultConfigHome string = path.Join(xdg.ConfigHome, "gelo")
+	DefaultConfigFile string = path.Join(DefaultConfigHome, "config.json")
+)

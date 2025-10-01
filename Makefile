@@ -1,16 +1,46 @@
+MAIN=.
+TAG_VERSION=$(shell git describe --tags --exact-match 2>/dev/null || git rev-parse --short HEAD || echo "were-init")
+VERSION=$(subst /,_,$(TAG_VERSION))
+
+all: build
+	@echo all built
+
 build:
-	go build
+	 go build $(MAIN)
 
 clean:
-	go clean
+	@rm -rf gelo target
+	@echo all removed
 
 lint:
-	golangci-lint run .
+	golangci-lint run ./...
+	@echo all code is linted
+
+format:
+	gofmt -w -s .
+
+format-check:
+	gofmt -l .
 
 run:
-	go run . $(OTHER)
+	go run $(MAIN) -loglevel DEBUG
 
-setup:
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.63.4
+test:
+	go test -v ./...
 
-.PHONY: build clean lint run setup
+sbom: build
+	@mkdir -p target/sbom
+	cyclonedx-gomod bin -json -output ./target/sbom/gelo-$(VERSION).bom.json ./gelo
+
+setup-devtools:
+	# Vulnerability checker
+	go install golang.org/x/vuln/cmd/govulncheck@latest
+	# Debugger
+	go install github.com/go-delve/delve/cmd/dlv@latest
+	# Linter
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	# SBOM generator
+	go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
+
+
+.PHONY: all build clean dev-dependencies lint format format-check run test sbom setup-devtools

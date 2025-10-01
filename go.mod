@@ -1,3 +1,3 @@
 module go.cpmachado.pt/gelo
 
-go 1.24.0
+go 1.25.1

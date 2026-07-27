@@ -51,7 +51,8 @@ func main() {
 		slog.Error("MAIN", slog.Any("error", err))
 		os.Exit(1)
 	}
-	slog.Info("MAIN",
+	slog.Info(
+		"MAIN",
 		slog.String("message", "Retrieving records"),
 		slog.String("origin", fide.XmlURL),
 		slog.String("filename", filename),

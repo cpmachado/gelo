@@ -9,6 +9,7 @@ Liren.
 Unfortunely, he lost, but did so as a champion.
 
 ## Currently
+
 gelo simply retrieves the last xml list from FIDE and outputs a csv version of
 it, which greatly reduces the size of the file and makes parsing easier.
 
@@ -24,6 +25,7 @@ go install go.cpmachado.pt/gelo@latest
 ```
 
 ## Usage
+
 ```sh
 Usage of gelo:
   -d string

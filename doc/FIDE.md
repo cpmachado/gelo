@@ -12,5 +12,4 @@ FIDE Online Arena Rating.
 
 On the Fide Online Arena, nobody cares about it.(cpmachado)
 
-
 Reference: <https://ratings.fide.com/download_lists.phtml>
